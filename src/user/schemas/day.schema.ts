@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument } from 'mongoose';
+import { HydratedDocument, Types } from 'mongoose';
 
 export type DayDocument = HydratedDocument<Day>;
 
@@ -11,5 +11,4 @@ export class Day {
   @Prop()
   rating: number;
 }
-
 export const DaySchema = SchemaFactory.createForClass(Day);

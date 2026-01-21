@@ -1,27 +1,25 @@
 import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
 import { CreateUserDto } from './dto/create-user.dto';
 import { User } from './schemas';
+import { UserRepository } from './user.repository';
 
 @Injectable()
 export class UserService {
-  constructor(@InjectModel('User') private userModel: Model<User>) {}
+  constructor(private userRepository: UserRepository) {}
 
-  async register(createUserDto: CreateUserDto) {
-    const newUser = new this.userModel(createUserDto);
-    return await newUser.save();
+  async register(createUserDto: CreateUserDto): Promise<User> {
+    return await this.userRepository.create(createUserDto);
   }
 
-  async login(createUserDto: CreateUserDto) {
-    const user = await this.userModel.findOne({
-      username: createUserDto.username,
-      password: createUserDto.password,
-    });
+  async login(createUserDto: CreateUserDto): Promise<User | string> {
+    const user = await this.userRepository.findByCredentials(
+      createUserDto.username,
+      createUserDto.password,
+    );
     return user || 'User not found';
   }
 
-  async findOne(id: string) {
-    return await this.userModel.findById(id);
+  async findOne(id: string): Promise<User | null> {
+    return await this.userRepository.findById(id);
   }
 }

@@ -1,3 +1,4 @@
+import * as bcrypt from 'bcryptjs';
 import { Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { User } from './schemas';
@@ -7,16 +8,34 @@ import { UserRepository } from './user.repository';
 export class UserService {
   constructor(private userRepository: UserRepository) {}
 
-  async register(createUserDto: CreateUserDto): Promise<User> {
-    return await this.userRepository.create(createUserDto);
+  async register(createUserDto: CreateUserDto): Promise<User | string> {
+    const isUsernameTaken = await this.userRepository.findByCredentials(
+      createUserDto.username,
+    );
+    if (isUsernameTaken) {
+      return 'Username already taken';
+    }
+    const saltOrRounds = 10;
+    const hashedPassword = await bcrypt.hash(
+      createUserDto.password,
+      saltOrRounds,
+    );
+
+    const userWithHashedPassword = {
+      ...createUserDto,
+      password: hashedPassword,
+    };
+    return await this.userRepository.create(userWithHashedPassword);
   }
 
   async login(createUserDto: CreateUserDto): Promise<User | string> {
     const user = await this.userRepository.findByCredentials(
       createUserDto.username,
-      createUserDto.password,
     );
-    return user || 'User not found';
+    if (!user) return 'Invalid credentials';
+
+    const isPasswordValid = await bcrypt.compare(user.password, user.password);
+    return isPasswordValid ? user : 'Invalid credentials';
   }
 
   async findOne(id: string): Promise<User | null> {

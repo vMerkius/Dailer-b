@@ -13,11 +13,8 @@ export class UserRepository {
     return await newUser.save();
   }
 
-  async findByCredentials(
-    username: string,
-    password: string,
-  ): Promise<User | null> {
-    return await this.userModel.findOne({ username, password });
+  async findByCredentials(username: string): Promise<User | null> {
+    return await this.userModel.findOne({ username });
   }
 
   async findById(id: string): Promise<User | null> {

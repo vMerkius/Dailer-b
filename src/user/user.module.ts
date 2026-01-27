@@ -4,6 +4,7 @@ import { UserService } from './user.service';
 import { UserController } from './user.controller';
 import { UserRepository } from './user.repository';
 import { User, UserSchema, Day, DaySchema } from './schemas';
+import { MessageResourceConfig } from '../config/MessageResourceConfig';
 
 @Module({
   imports: [
@@ -13,6 +14,6 @@ import { User, UserSchema, Day, DaySchema } from './schemas';
     ]),
   ],
   controllers: [UserController],
-  providers: [UserRepository, UserService],
+  providers: [UserRepository, UserService, MessageResourceConfig],
 })
 export class UserModule {}

@@ -1,20 +1,47 @@
 import * as bcrypt from 'bcryptjs';
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { User } from './schemas';
 import { UserRepository } from './user.repository';
+import { RegisterValidator } from '../validator';
+import { MessageResourceConfig } from '../config/MessageResourceConfig';
 
 @Injectable()
 export class UserService {
-  constructor(private userRepository: UserRepository) {}
+  constructor(
+    private userRepository: UserRepository,
+    private registerValidator: RegisterValidator,
+    private messageResourceConfig: MessageResourceConfig,
+  ) {}
 
   async register(createUserDto: CreateUserDto): Promise<User | string> {
+    const validationErrors =
+      this.registerValidator.validateRegistration(createUserDto);
+
+    if (validationErrors.length > 0) {
+      const firstError = validationErrors[0];
+      const errorMessage = this.messageResourceConfig.getMessage(
+        firstError.code,
+      );
+      const statusCode = this.messageResourceConfig.getStatusCode(
+        firstError.code,
+      );
+      throw new BadRequestException({
+        code: firstError.code,
+        message: errorMessage,
+        errors: validationErrors,
+        statusCode: statusCode,
+      });
+    }
+
     const isUsernameTaken = await this.userRepository.findByCredentials(
       createUserDto.username,
     );
+
     if (isUsernameTaken) {
       return 'Username already taken';
     }
+
     const saltOrRounds = 10;
     const hashedPassword = await bcrypt.hash(
       createUserDto.password,

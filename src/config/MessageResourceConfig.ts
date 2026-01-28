@@ -42,6 +42,7 @@ export class MessageResourceConfig {
   }
 
   getErrorMessage(errorCode: UserErrorCode) {
+    console.log(errorCode, this.messages);
     const messageText =
       this.messages.get(errorCode) || 'An unexpected error occurred';
     const errorConfig = USER_ERROR_MESSAGES[errorCode];

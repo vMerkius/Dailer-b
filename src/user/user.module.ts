@@ -5,6 +5,7 @@ import { UserController } from './user.controller';
 import { UserRepository } from './user.repository';
 import { User, UserSchema, Day, DaySchema } from './schemas';
 import { MessageResourceConfig } from '../config/MessageResourceConfig';
+import { RegisterValidator } from '../validator';
 
 @Module({
   imports: [
@@ -14,6 +15,11 @@ import { MessageResourceConfig } from '../config/MessageResourceConfig';
     ]),
   ],
   controllers: [UserController],
-  providers: [UserRepository, UserService, MessageResourceConfig],
+  providers: [
+    UserRepository,
+    UserService,
+    MessageResourceConfig,
+    RegisterValidator,
+  ],
 })
 export class UserModule {}

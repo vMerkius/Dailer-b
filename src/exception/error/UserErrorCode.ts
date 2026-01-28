@@ -5,6 +5,10 @@ export enum UserErrorCode {
   INVALID_CREDENTIALS = 'USER_002',
   USER_NOT_FOUND = 'USER_003',
   INVALID_INPUT = 'USER_004',
+  MISSING_USERNAME = 'USER_005',
+  MISSING_PASSWORD = 'USER_006',
+  PASSWORD_TOO_SHORT = 'USER_007',
+  USERNAME_TOO_SHORT = 'USER_008',
 }
 
 export const USER_ERROR_MESSAGES: Record<
@@ -25,6 +29,22 @@ export const USER_ERROR_MESSAGES: Record<
   },
   [UserErrorCode.INVALID_INPUT]: {
     message: 'Invalid input',
+    statusCode: HttpStatus.BAD_REQUEST,
+  },
+  [UserErrorCode.MISSING_USERNAME]: {
+    message: 'Username is required',
+    statusCode: HttpStatus.BAD_REQUEST,
+  },
+  [UserErrorCode.MISSING_PASSWORD]: {
+    message: 'Password is required',
+    statusCode: HttpStatus.BAD_REQUEST,
+  },
+  [UserErrorCode.PASSWORD_TOO_SHORT]: {
+    message: 'Password must be at least 6 characters long',
+    statusCode: HttpStatus.BAD_REQUEST,
+  },
+  [UserErrorCode.USERNAME_TOO_SHORT]: {
+    message: 'Username must be at least 3 characters long',
     statusCode: HttpStatus.BAD_REQUEST,
   },
 };

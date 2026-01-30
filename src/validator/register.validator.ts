@@ -14,7 +14,16 @@ export interface IRegistrationData {
 @Injectable()
 export class RegisterValidator {
   errors: IValidationError[] = [];
-  validateRegistration(data: IRegistrationData): IValidationError[] {
+  validateRegistration(
+    data: IRegistrationData,
+    isUsernameTaken: boolean | null = null,
+  ): IValidationError[] {
+    if (isUsernameTaken) {
+      this.errors.push({
+        field: 'username',
+        code: UserErrorCode.USER_ALREADY_EXISTS,
+      });
+    }
     if (!data.username || data.username.toString().trim() === '') {
       this.errors.push({
         field: 'username',

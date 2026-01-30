@@ -14,9 +14,15 @@ export class UserService {
     private messageResourceConfig: MessageResourceConfig,
   ) {}
 
-  async register(createUserDto: CreateUserDto): Promise<User | string> {
-    const validationErrors =
-      this.registerValidator.validateRegistration(createUserDto);
+  async register(createUserDto: CreateUserDto): Promise<User> {
+    const existingUser = await this.userRepository.findByCredentials(
+      createUserDto.username,
+    );
+    const isUsernameTaken = !!existingUser;
+    const validationErrors = this.registerValidator.validateRegistration(
+      createUserDto,
+      isUsernameTaken,
+    );
 
     if (validationErrors.length > 0) {
       const firstError = validationErrors[0];
@@ -32,14 +38,6 @@ export class UserService {
         errors: validationErrors,
         statusCode: statusCode,
       });
-    }
-
-    const isUsernameTaken = await this.userRepository.findByCredentials(
-      createUserDto.username,
-    );
-
-    if (isUsernameTaken) {
-      return 'Username already taken';
     }
 
     const saltOrRounds = 10;

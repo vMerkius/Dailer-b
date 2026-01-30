@@ -1,20 +1,20 @@
 import { Injectable } from '@nestjs/common';
 import { UserErrorCode } from '../exception/error/UserErrorCode';
 
-export interface ValidationError {
+export interface IValidationError {
   field: string;
   code: UserErrorCode;
 }
 
-export interface RegistrationData {
+export interface IRegistrationData {
   username: string;
   password: string;
 }
 
 @Injectable()
 export class RegisterValidator {
-  validateRegistration(data: RegistrationData): ValidationError[] {
-    const errors: ValidationError[] = [];
+  validateRegistration(data: IRegistrationData): IValidationError[] {
+    const errors: IValidationError[] = [];
 
     if (!data.username || data.username.toString().trim() === '') {
       errors.push({

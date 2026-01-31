@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { UserErrorCode } from '../exception/error/UserErrorCode';
+import { UserErrorCode } from '../../exception/error/UserErrorCode';
 
 export interface IValidationError {
   field: string;

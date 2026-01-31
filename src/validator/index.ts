@@ -1,1 +1,1 @@
-export { RegisterValidator } from './register.validator';
+export { RegisterValidator } from './user/register.validator';

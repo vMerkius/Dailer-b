@@ -37,22 +37,4 @@ export class LoginValidator {
       });
     }
   }
-
-  validateCredentials(
-    username: string,
-    password: string,
-    userExists: boolean,
-  ): IValidationError[] {
-    const errors: IValidationError[] = [];
-
-    if (!userExists) {
-      errors.push({
-        field: 'username',
-        code: UserErrorCode.INVALID_CREDENTIALS,
-      });
-      return errors;
-    }
-
-    return errors;
-  }
 }

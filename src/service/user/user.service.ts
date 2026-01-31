@@ -1,4 +1,5 @@
 import * as bcrypt from 'bcryptjs';
+import { JwtService } from '@nestjs/jwt';
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateUserDto } from '../../integration/user/dto/create-user.dto';
 import { User } from '../../model';
@@ -12,9 +13,12 @@ export class UserService {
     private userRepository: UserRepository,
     private registerValidator: RegisterValidator,
     private messageResourceConfig: MessageResourceConfig,
+    private jwtService: JwtService,
   ) {}
 
-  async register(createUserDto: CreateUserDto): Promise<User> {
+  async register(
+    createUserDto: CreateUserDto,
+  ): Promise<{ accessToken: string }> {
     const existingUser = await this.userRepository.findByCredentials(
       createUserDto.username,
     );
@@ -50,7 +54,15 @@ export class UserService {
       ...createUserDto,
       password: hashedPassword,
     };
-    return await this.userRepository.create(userWithHashedPassword);
+    const createdUser = await this.userRepository.create(
+      userWithHashedPassword,
+    );
+
+    const payload = { sub: createdUser._id, username: createdUser.username };
+
+    return {
+      accessToken: await this.jwtService.signAsync(payload),
+    };
   }
 
   async login(createUserDto: CreateUserDto): Promise<User | string> {
@@ -59,7 +71,10 @@ export class UserService {
     );
     if (!user) return 'Invalid credentials';
 
-    const isPasswordValid = await bcrypt.compare(user.password, user.password);
+    const isPasswordValid = await bcrypt.compare(
+      createUserDto.password,
+      user.password,
+    );
     return isPasswordValid ? user : 'Invalid credentials';
   }
 

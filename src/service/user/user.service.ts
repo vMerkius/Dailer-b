@@ -1,10 +1,10 @@
 import * as bcrypt from 'bcryptjs';
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto';
-import { User } from './schemas';
-import { UserRepository } from './user.repository';
-import { RegisterValidator } from '../validator';
-import { MessageResourceConfig } from '../config/MessageResourceConfig';
+import { CreateUserDto } from '../../integration/user/dto/create-user.dto';
+import { User } from '../../model';
+import { UserRepository } from 'src/repository';
+import { RegisterValidator } from '../../validator';
+import { MessageResourceConfig } from '../../config/MessageResourceConfig';
 
 @Injectable()
 export class UserService {

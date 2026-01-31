@@ -6,10 +6,10 @@ export type UserDocument = HydratedDocument<User>;
 @Schema()
 export class User {
   @Prop({ required: true })
-  password: string;
+  username: string;
 
   @Prop({ required: true })
-  username: string;
+  password: string;
 
   @Prop({ default: Date.now })
   createdAt: Date;

@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { UserService } from './user.service';
-import { UserController } from './user.controller';
-import { UserRepository } from './user.repository';
-import { User, UserSchema, Day, DaySchema } from './schemas';
-import { MessageResourceConfig } from '../config/MessageResourceConfig';
-import { RegisterValidator } from '../validator';
+import { UserService } from '../../service/user/user.service';
+import { UserController } from '../../controller/user/user.controller';
+import { UserRepository } from 'src/repository';
+import { User, UserSchema, Day, DaySchema } from '../../model';
+import { MessageResourceConfig } from '../../config/MessageResourceConfig';
+import { RegisterValidator } from '../../validator';
 
 @Module({
   imports: [

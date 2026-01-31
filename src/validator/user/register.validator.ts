@@ -39,7 +39,7 @@ export class RegisterValidator {
     if (!username || username.trim() === '') {
       errors.push({
         field: 'username',
-        code: UserErrorCode.MISSING_USERNAME,
+        code: UserErrorCode.USERNAME_MISSING,
       });
     } else if (username.length < 3) {
       errors.push({
@@ -53,12 +53,18 @@ export class RegisterValidator {
     if (!password || password.trim() === '') {
       errors.push({
         field: 'password',
-        code: UserErrorCode.MISSING_PASSWORD,
+        code: UserErrorCode.PASSWORD_MISSING,
       });
-    } else if (password.length < 6) {
+      return;
+    }
+
+    const passwordRegex =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+
+    if (passwordRegex.test(password) === false) {
       errors.push({
         field: 'password',
-        code: UserErrorCode.PASSWORD_TOO_SHORT,
+        code: UserErrorCode.PASSWORD_TOO_WEAK,
       });
     }
   }

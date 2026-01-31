@@ -20,7 +20,6 @@ export class MessageResourceConfig {
         process.cwd(),
         'src/config/error-messages.properties',
       );
-      console.log('Loading error messages from:', filePath);
       const fileContent = fs.readFileSync(filePath, 'utf-8');
 
       fileContent.split('\n').forEach((line) => {
@@ -32,7 +31,6 @@ export class MessageResourceConfig {
           }
         }
       });
-      console.log('Messages map:', this.messages);
     } catch (error) {
       console.error(
         'Failed to load error messages from properties file:',

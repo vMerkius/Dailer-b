@@ -16,6 +16,7 @@ async function bootstrap() {
 
     const port = process.env.PORT ?? 3000;
     await app.listen(port);
+    console.log(process.env.NODE_ENV);
 
     logger.log(`Application is running on port ${port}`);
     logger.log(`MongoDB connection established successfully`);

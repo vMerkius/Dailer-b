@@ -37,8 +37,23 @@ export class UserController {
   }
 
   @Post('login')
-  login(@Body() createUserDto: CreateUserDto) {
-    return this.userService.login(createUserDto);
+  async login(
+    @Body() createUserDto: CreateUserDto,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    const { accessToken } = await this.userService.login(createUserDto);
+
+    res.cookie('access_token', accessToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: 30 * 24 * 60 * 60 * 1000,
+    });
+
+    return {
+      message: 'Login successful',
+      statusCode: 200,
+    };
   }
 
   @Get(':id')

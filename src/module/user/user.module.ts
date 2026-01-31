@@ -5,7 +5,7 @@ import { UserController } from '../../controller/user/user.controller';
 import { UserRepository } from 'src/repository';
 import { User, UserSchema, Day, DaySchema } from '../../model';
 import { MessageResourceConfig } from '../../config/MessageResourceConfig';
-import { RegisterValidator } from '../../validator';
+import { LoginValidator, RegisterValidator } from '../../validator';
 
 @Module({
   imports: [
@@ -20,6 +20,7 @@ import { RegisterValidator } from '../../validator';
     UserService,
     MessageResourceConfig,
     RegisterValidator,
+    LoginValidator,
   ],
 })
 export class UserModule {}

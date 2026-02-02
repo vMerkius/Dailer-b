@@ -4,8 +4,6 @@ import { UserService } from '../../service/user/user.service';
 import { UserController } from '../../controller/user/user.controller';
 import { UserRepository } from 'src/repository';
 import { User, UserSchema, Day, DaySchema } from '../../model';
-import { MessageResourceConfig } from '../../config/MessageResourceConfig';
-import { LoginValidator, RegisterValidator } from '../../validator';
 
 @Module({
   imports: [

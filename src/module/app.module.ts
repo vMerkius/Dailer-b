@@ -5,6 +5,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { AppController } from 'src/controller';
 import { AppService } from '../service/app.service';
 import { UserModule } from './user/user.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { UserModule } from './user/user.module';
       process.env.MONGODB_URI || 'mongodb://localhost/nest',
     ),
     UserModule,
+    AuthModule,
     JwtModule.register({
       global: true,
       secret: process.env.JWT_SECRET,

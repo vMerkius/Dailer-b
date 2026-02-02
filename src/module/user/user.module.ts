@@ -15,12 +15,7 @@ import { LoginValidator, RegisterValidator } from '../../validator';
     ]),
   ],
   controllers: [UserController],
-  providers: [
-    UserRepository,
-    UserService,
-    MessageResourceConfig,
-    RegisterValidator,
-    LoginValidator,
-  ],
+  providers: [UserRepository, UserService],
+  exports: [UserRepository, UserService],
 })
 export class UserModule {}

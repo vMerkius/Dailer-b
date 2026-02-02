@@ -1,10 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { UserErrorCode } from '../../exception/error/UserErrorCode';
-
-export interface IValidationError {
-  field: string;
-  code: UserErrorCode;
-}
+import { IValidationError } from '../../types';
+import { UserErrorCode } from 'src/exception/error';
 
 export interface IRegistrationData {
   username: string;

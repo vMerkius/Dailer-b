@@ -4,7 +4,11 @@ import * as path from 'path';
 import {
   UserErrorCode,
   USER_ERROR_MESSAGES,
-} from '../exception/error/UserErrorCode';
+  GeneralErrorCode,
+  GENERAL_ERROR_MESSAGES,
+} from '../exception/error';
+
+type ErrorCode = UserErrorCode | GeneralErrorCode;
 
 @Injectable()
 export class MessageResourceConfig {
@@ -39,11 +43,15 @@ export class MessageResourceConfig {
     }
   }
 
-  getErrorMessage(errorCode: UserErrorCode) {
-    console.log(errorCode, this.messages);
+  getErrorMessage(errorCode: ErrorCode) {
     const messageText =
-      this.messages.get(errorCode) || 'An unexpected error occurred';
-    const errorConfig = USER_ERROR_MESSAGES[errorCode];
+      this.messages.get(errorCode) ||
+      this.messages.get(GeneralErrorCode.GENERAL_ERROR) ||
+      'An unexpected error occurred';
+
+    const errorConfig =
+      USER_ERROR_MESSAGES[errorCode as UserErrorCode] ||
+      GENERAL_ERROR_MESSAGES[errorCode as GeneralErrorCode];
 
     return {
       message: messageText,
@@ -51,11 +59,11 @@ export class MessageResourceConfig {
     };
   }
 
-  getMessage(errorCode: UserErrorCode): string {
+  getMessage(errorCode: ErrorCode): string {
     return this.getErrorMessage(errorCode).message;
   }
 
-  getStatusCode(errorCode: UserErrorCode): number {
+  getStatusCode(errorCode: ErrorCode): number {
     return this.getErrorMessage(errorCode).statusCode;
   }
 }

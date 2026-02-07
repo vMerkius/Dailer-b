@@ -1,9 +1,13 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Post, Body } from '@nestjs/common';
+import { AssistantService } from 'src/service';
 
 @Controller('assistant')
 export class AssistantController {
-  @Get()
-  getAssistant() {
-    return 'Hello World';
+  constructor(private readonly assistantService: AssistantService) {}
+
+  @Post('chat')
+  async chat(@Body('prompt') prompt: string) {
+    const response = await this.assistantService.getResponse(prompt);
+    return { response };
   }
 }

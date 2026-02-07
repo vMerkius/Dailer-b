@@ -6,6 +6,7 @@ import { AppController } from 'src/controller';
 import { AppService } from '../service/app.service';
 import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
+import { AssistantModule } from './assistant/asssitant.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { AuthModule } from './auth/auth.module';
     ),
     UserModule,
     AuthModule,
+    AssistantModule,
     JwtModule.register({
       global: true,
       secret: process.env.JWT_SECRET,

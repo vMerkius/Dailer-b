@@ -1,7 +1,7 @@
 import { HttpStatus } from '@nestjs/common';
 
 export enum GeneralErrorCode {
-  GENERAL_ERROR = 'ERR_GENERAL',
+  GENERAL_ERROR = 'ERR_001',
 }
 
 export const GENERAL_ERROR_MESSAGES: Record<

@@ -116,6 +116,13 @@ export class AuthController {
     };
   }
 
+  @Post('mobile/register')
+  async mobileRegister(@Body() registerUserDto: RegisterUserDto) {
+    const { accessToken, refreshToken, expiresIn } =
+      await this.authService.register(registerUserDto);
+    return { accessToken, refreshToken, expiresIn };
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.userService.findOne(id);

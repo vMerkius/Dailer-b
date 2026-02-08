@@ -6,9 +6,10 @@ import {
   USER_ERROR_MESSAGES,
   GeneralErrorCode,
   GENERAL_ERROR_MESSAGES,
+  AssistantErrorCode,
 } from '../exception/error';
 
-type ErrorCode = UserErrorCode | GeneralErrorCode;
+type ErrorCode = UserErrorCode | GeneralErrorCode | AssistantErrorCode;
 
 @Injectable()
 export class MessageResourceConfig {

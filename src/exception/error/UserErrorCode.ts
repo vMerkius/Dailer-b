@@ -11,6 +11,7 @@ export enum UserErrorCode {
   USER_NOT_FOUND = 'USER_ERR_008',
   INVALID_INPUT = 'USER_ERR_009',
   USER_ALREADY_EXISTS = 'USER_ERR_010',
+  INVALID_REFRESH_TOKEN = 'USER_ERR_011',
 }
 
 export const USER_ERROR_MESSAGES: Record<
@@ -57,5 +58,9 @@ export const USER_ERROR_MESSAGES: Record<
   [UserErrorCode.USER_ALREADY_EXISTS]: {
     message: 'Username already taken',
     statusCode: HttpStatus.CONFLICT,
+  },
+  [UserErrorCode.INVALID_REFRESH_TOKEN]: {
+    message: 'Invalid refresh token',
+    statusCode: HttpStatus.UNAUTHORIZED,
   },
 };

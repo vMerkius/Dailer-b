@@ -11,6 +11,12 @@ import {
 import { AuthService, UserService } from 'src/service';
 import { RegisterUserDto, LoginUserDto } from 'src/integration';
 
+const COOKIE_OPTIONS = {
+  httpOnly: true,
+  secure: process.env.NODE_ENV === 'production',
+  sameSite: 'lax' as const,
+};
+
 @Controller('auth')
 export class AuthController {
   constructor(
@@ -18,24 +24,46 @@ export class AuthController {
     private readonly userService: UserService,
   ) {}
 
+  private readonly ACCESS_TOKEN_MAX_AGE = parseInt(
+    process.env.ACCESS_TOKEN_EXPIRES_IN ?? '86400',
+    10,
+  );
+  private readonly REFRESH_TOKEN_MAX_AGE = parseInt(
+    process.env.REFRESH_TOKEN_EXPIRES_IN ?? '2592000',
+    10,
+  );
+
+  private setAuthCookies(
+    res: Response,
+    accessToken: string,
+    refreshToken: string,
+  ): void {
+    res.cookie('access_token', accessToken, {
+      ...COOKIE_OPTIONS,
+      maxAge: this.ACCESS_TOKEN_MAX_AGE * 1000,
+    });
+
+    res.cookie('refresh_token', refreshToken, {
+      ...COOKIE_OPTIONS,
+      maxAge: this.REFRESH_TOKEN_MAX_AGE * 1000,
+    });
+  }
+
   @HttpCode(201)
   @Post('web/register')
   async register(
     @Body() registerUserDto: RegisterUserDto,
     @Res({ passthrough: true }) res: Response,
   ) {
-    const { accessToken } = await this.authService.register(registerUserDto);
+    const { accessToken, refreshToken, expiresIn } =
+      await this.authService.register(registerUserDto);
 
-    res.cookie('access_token', accessToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      maxAge: 30 * 24 * 60 * 60 * 1000,
-    });
+    this.setAuthCookies(res, accessToken, refreshToken);
 
     return {
       message: 'Registration successful',
       statusCode: 201,
+      expiresIn,
     };
   }
 
@@ -44,18 +72,15 @@ export class AuthController {
     @Body() loginUserDto: LoginUserDto,
     @Res({ passthrough: true }) res: Response,
   ) {
-    const { accessToken } = await this.authService.login(loginUserDto);
+    const { accessToken, refreshToken, expiresIn } =
+      await this.authService.login(loginUserDto);
 
-    res.cookie('access_token', accessToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      maxAge: 30 * 24 * 60 * 60 * 1000,
-    });
+    this.setAuthCookies(res, accessToken, refreshToken);
 
     return {
       message: 'Login successful',
       statusCode: 200,
+      expiresIn,
     };
   }
 

@@ -8,6 +8,9 @@ export class AssistantController {
   @Post('chat')
   async chat(@Body('prompt') prompt: string) {
     const response = await this.assistantService.getResponse(prompt);
-    return { response };
+    return {
+      message: response,
+      statusCode: 200,
+    };
   }
 }

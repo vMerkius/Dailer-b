@@ -5,9 +5,11 @@ import {
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
+import { Types } from 'mongoose';
+
 import { UserRepository } from 'src/repository';
 import { LoginValidator, RegisterValidator } from 'src/validator';
-import { IValidationError } from 'src/types';
+import { IAuthResponse, IValidationError } from 'src/types';
 import { MessageResourceConfig } from '../../config/MessageResourceConfig';
 import { UserErrorCode } from 'src/exception/error';
 import { RegisterUserDto, LoginUserDto } from 'src/integration';
@@ -21,6 +23,15 @@ export class AuthService {
     private messageResourceConfig: MessageResourceConfig,
     private jwtService: JwtService,
   ) {}
+
+  private readonly ACCESS_TOKEN_MAX_AGE = parseInt(
+    process.env.ACCESS_TOKEN_EXPIRES_IN ?? '86400',
+    10,
+  );
+  private readonly REFRESH_TOKEN_MAX_AGE = parseInt(
+    process.env.REFRESH_TOKEN_EXPIRES_IN ?? '2592000',
+    10,
+  );
 
   private throwValidationError(
     code: UserErrorCode,
@@ -42,9 +53,7 @@ export class AuthService {
     });
   }
 
-  async register(
-    registerUserDto: RegisterUserDto,
-  ): Promise<{ accessToken: string }> {
+  async register(registerUserDto: RegisterUserDto): Promise<IAuthResponse> {
     const existingUser = await this.userRepository.findByUsername(
       registerUserDto.username,
     );
@@ -75,13 +84,10 @@ export class AuthService {
     );
 
     const payload = { sub: createdUser._id, username: createdUser.username };
-
-    return {
-      accessToken: await this.jwtService.signAsync(payload),
-    };
+    return this.generateTokens(payload);
   }
 
-  async login(loginUserDto: LoginUserDto): Promise<{ accessToken: string }> {
+  async login(loginUserDto: LoginUserDto): Promise<IAuthResponse> {
     const validationErrors: IValidationError[] =
       this.loginValidator.validateLogin(loginUserDto);
 
@@ -108,6 +114,25 @@ export class AuthService {
     }
 
     const payload = { sub: user._id, username: user.username };
-    return { accessToken: await this.jwtService.signAsync(payload) };
+
+    return this.generateTokens(payload);
+  }
+
+  private async generateTokens(payload: {
+    sub: Types.ObjectId;
+    username: string;
+  }) {
+    const accessToken = await this.jwtService.signAsync(payload, {
+      expiresIn: this.ACCESS_TOKEN_MAX_AGE,
+    });
+    const refreshToken = await this.jwtService.signAsync(payload, {
+      expiresIn: this.REFRESH_TOKEN_MAX_AGE,
+    });
+    const expiresIn = this.ACCESS_TOKEN_MAX_AGE;
+    return {
+      accessToken,
+      refreshToken,
+      expiresIn,
+    };
   }
 }

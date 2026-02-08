@@ -123,6 +123,16 @@ export class AuthController {
     return { accessToken, refreshToken, expiresIn };
   }
 
+  @Post('mobile/refresh')
+  async mobileRefresh(@Body('refreshToken') refreshToken: string) {
+    const {
+      accessToken,
+      refreshToken: newRefreshToken,
+      expiresIn,
+    } = await this.authService.refresh({ refreshToken });
+    return { accessToken, refreshToken: newRefreshToken, expiresIn };
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.userService.findOne(id);

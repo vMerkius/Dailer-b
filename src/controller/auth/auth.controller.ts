@@ -105,6 +105,17 @@ export class AuthController {
     };
   }
 
+  @Post('web/logout')
+  @HttpCode(200)
+  logout(@Res({ passthrough: true }) res: Response) {
+    res.clearCookie('access_token', COOKIE_OPTIONS);
+    res.clearCookie('refresh_token', COOKIE_OPTIONS);
+    return {
+      message: 'Logout successful',
+      statusCode: 200,
+    };
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.userService.findOne(id);

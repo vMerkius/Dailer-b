@@ -67,6 +67,7 @@ export class AuthController {
     };
   }
 
+  @HttpCode(200)
   @Post('web/login')
   async login(
     @Body() loginUserDto: LoginUserDto,
@@ -79,6 +80,26 @@ export class AuthController {
 
     return {
       message: 'Login successful',
+      statusCode: 200,
+      expiresIn,
+    };
+  }
+
+  @HttpCode(200)
+  @Post('web/refresh')
+  async refreshToken(@Res({ passthrough: true }) res: Response) {
+    const refreshToken = (res.req.cookies as Record<string, string>)[
+      'refresh_token'
+    ];
+    const {
+      accessToken,
+      refreshToken: newRefreshToken,
+      expiresIn,
+    } = await this.authService.refresh({ refreshToken });
+    this.setAuthCookies(res, accessToken, newRefreshToken);
+
+    return {
+      message: 'Token refreshed successfully',
       statusCode: 200,
       expiresIn,
     };

@@ -14,6 +14,11 @@ import { MessageResourceConfig } from '../../config/MessageResourceConfig';
 import { UserErrorCode } from 'src/exception/error';
 import { RegisterUserDto, LoginUserDto } from 'src/integration';
 
+type ITokenPayload = {
+  sub: Types.ObjectId;
+  username: string;
+};
+
 @Injectable()
 export class AuthService {
   constructor(
@@ -118,10 +123,22 @@ export class AuthService {
     return this.generateTokens(payload);
   }
 
-  private async generateTokens(payload: {
-    sub: Types.ObjectId;
-    username: string;
-  }) {
+  async refresh({
+    refreshToken,
+  }: {
+    refreshToken: string;
+  }): Promise<IAuthResponse> {
+    try {
+      const decoded: ITokenPayload =
+        await this.jwtService.verifyAsync(refreshToken);
+      const payload = { sub: decoded.sub, username: decoded.username };
+      return this.generateTokens(payload);
+    } catch {
+      return this.throwUnauthorizedError(UserErrorCode.INVALID_REFRESH_TOKEN);
+    }
+  }
+
+  private async generateTokens(payload: ITokenPayload) {
     const accessToken = await this.jwtService.signAsync(payload, {
       expiresIn: this.ACCESS_TOKEN_MAX_AGE,
     });
